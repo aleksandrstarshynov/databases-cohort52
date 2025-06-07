@@ -53,7 +53,7 @@ async function updateEpisodeExercises(client) {
 
   // 1. Rename title of S30E13
   const updateResult1 = await db.collection("bob_ross_episodes").updateOne(
-    { episode: "S30E13", title: "BLUE RIDGE FALLERS" },
+    { episode: "S30E13" },
     { $set: { title: "BLUE RIDGE FALLS" } }
   );
   console.log(
@@ -76,12 +76,14 @@ async function updateEpisodeExercises(client) {
 async function deleteEpisodeExercise(client) {
   const db = client.db("databaseWeek3");
 
-  const deleteResult = await db.collection("bob_ross_episodes").deleteOne({
+  const deleteResult = await db.collection("bob_ross_episodes").findOneAndDelete({
     episode: "S31E14"
   });
-  console.log(
-    `Ran a command to delete episode and it deleted ${deleteResult.deletedCount} episodes`
-  );
+  if (deleteResult) {
+    console.log(`Deleted episode: ${deleteResult.episode}`);
+  } else {
+    console.log("No matching episode found to delete.");
+  }
 }
 
 async function main() {
