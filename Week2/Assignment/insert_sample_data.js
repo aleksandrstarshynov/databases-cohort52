@@ -1,9 +1,9 @@
 const sqlite3 = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('example.db');
+const db = new sqlite3.Database('research_db.db');
 
 db.serialize(() => {
-  // Вставка 15 авторов
+  // Generating 15 authors
   for (let i = 1; i <= 15; i++) {
     db.run(`
       INSERT INTO authors (author_id, author_name, university, date_of_birth, h_index, gender)
@@ -18,7 +18,7 @@ db.serialize(() => {
     ]);
   }
 
-  // Вставка 30 научных статей
+  // Generating 30 articles
   for (let i = 1; i <= 30; i++) {
     db.run(`
       INSERT INTO research_Papers (paper_id, paper_title, conference, publish_date)
@@ -31,9 +31,8 @@ db.serialize(() => {
     ]);
   }
 
-  // Привязка авторов к статьям
+  // Linking authors to articles
   for (let i = 1; i <= 30; i++) {
-    // Привяжем 2-3 случайных автора к каждой статье
     const authorsCount = 2 + (i % 2);
     for (let j = 0; j < authorsCount; j++) {
       const authorId = (i + j) % 15 + 1;
