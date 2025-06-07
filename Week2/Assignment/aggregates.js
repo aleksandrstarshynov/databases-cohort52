@@ -9,7 +9,7 @@ const connection = await mysql.createConnection({
 try {
   await connection.query("USE w2_assignment");
 
-  // 1. Все статьи и количество авторов
+  // All articles and number of authors
   const [papersWithAuthorCount] = await connection.query(`
     SELECT 
       rp.paper_title,
@@ -21,10 +21,10 @@ try {
     GROUP BY 
       rp.paper_id;
   `);
-  console.log("\n1️⃣ Papers and number of authors:");
+  console.log("\n Papers and number of authors:");
   console.table(papersWithAuthorCount);
 
-  // 2. Количество статей, опубликованных женщинами
+  // Number of articles published by women
   const [femalePaperCount] = await connection.query(`
     SELECT 
       COUNT(ap.paper_id) AS total_papers_by_female_authors
@@ -33,12 +33,12 @@ try {
     JOIN 
       authorPapers ap ON a.author_id = ap.author_id
     WHERE 
-      a.gender = 'Female';
+      LOWER(TRIM(a.gender)) LIKE '%female%';
   `);
-  console.log("\n2️⃣ Total papers by female authors:");
+  console.log("\n Total papers by female authors:");
   console.table(femalePaperCount);
 
-  // 3. Средний h-index по университетам
+  // Average h-index by universities
   const [avgHIndexPerUni] = await connection.query(`
     SELECT 
       university,
@@ -48,10 +48,10 @@ try {
     GROUP BY 
       university;
   `);
-  console.log("\n3️⃣ Average h-index per university:");
+  console.log("\n Average h-index per university:");
   console.table(avgHIndexPerUni);
 
-  // 4. Сумма статей авторов по университетам
+  // Total number of articles by authors by university
   const [paperSumPerUni] = await connection.query(`
     SELECT 
       a.university,
@@ -63,10 +63,10 @@ try {
     GROUP BY 
       a.university;
   `);
-  console.log("\n4️⃣ Total papers per university:");
+  console.log("\n Total papers per university:");
   console.table(paperSumPerUni);
 
-  // 5. Min и Max h-index по университетам
+  // Min and Max h-index by universities
   const [minMaxHIndexPerUni] = await connection.query(`
     SELECT 
       university,
@@ -81,7 +81,7 @@ try {
   console.table(minMaxHIndexPerUni);
 
 } catch (error) {
-  console.error("❌ Error:", error.message);
+  console.error(" Error:", error.message);
 } finally {
   await connection.end();
 }
