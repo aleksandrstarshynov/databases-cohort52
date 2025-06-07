@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('example.db');
+const db = new sqlite3.Database('research_db.db');
 
 db.serialize(() => {
   db.run(`ALTER TABLE authors ADD COLUMN mentor INTEGER;`, (err) => {
@@ -17,11 +17,11 @@ db.serialize(() => {
     db.run(`
       CREATE TABLE authors_new (
         author_id INTEGER PRIMARY KEY,
-        author_name TEXT,
-        university TEXT,
-        date_of_birth TEXT,
+        author_name  VARCHAR(50) NOT NULL,
+        university TEXT NOT NULL,
+        date_of_birth DATE NOT NULL,
         h_index INTEGER,
-        gender TEXT,
+        gender TEXT CHECK(gender IN ('Male', 'Female', 'Prefer not to say')),
         mentor INTEGER,
         FOREIGN KEY (mentor) REFERENCES authors(author_id)
       );
