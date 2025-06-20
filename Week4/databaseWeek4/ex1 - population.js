@@ -1,18 +1,19 @@
-const { MongoClient } = require("mongodb");
-const csvtojson = require("csvtojson");
-require("dotenv").config();
+import { MongoClient } from "mongodb";
+import csvtojson from "csvtojson";
+import config from "./config.js";
 
 async function main() {
-  const client = new MongoClient(process.env.MONGODB_URL);
+  const client = new MongoClient(config.dbConnectionString);
 
   try {
     await client.connect();
-    const db = client.db("databaseWeek4");
+    const db = client.db(config.dbName);
     const collection = db.collection("aggregation");
-    // taks 1. I have uploaded data via Atlas
+
+    // Task 1. I have uploaded data via Atlas
 
     // Task 2. Aggregation
-const findPopulation = collection.aggregate([
+    const findPopulation = collection.aggregate([
       {
         $match: {
           Country: "Netherlands",
@@ -31,16 +32,18 @@ const findPopulation = collection.aggregate([
       },
     ]);
 
-    console.log("\n📊 Task 2 Result:\n", await findPopulation.toArray());
+    const populationResult = await findPopulation.toArray();
+    console.log("\n Task 2 Result:\n");
+    console.log(populationResult);
 
-    // Task 3. 
+    // Task 3.
     async function getContinentDataForYearAndAge(db, year, ageGroup) {
       const collection = db.collection("aggregation");
 
       const result = await collection.aggregate([
         {
           $match: {
-            Country: { $regex: /^[A-Z ]+$/ }, 
+            Country: { $regex: /^[A-Z ]+$/ },
             Year: year,
             Age: ageGroup,
           },
@@ -58,10 +61,12 @@ const findPopulation = collection.aggregate([
     const year = 2020;
     const age = "100+";
     const continentData = await getContinentDataForYearAndAge(db, year, age);
-    console.log(`\n🌍 Task 3 Result for Year: ${year}, Age: ${age}:\n`, continentData);
+
+    console.log(`\n Task 3 Result for Year: ${year}, Age: ${age}:\n`);
+    console.log(continentData);
 
   } catch (err) {
-    console.error(err);
+    console.error("❌ Ошибка при выполнении:", err);
   } finally {
     await client.close();
   }

@@ -1,12 +1,8 @@
-const { MongoClient } = require("mongodb");
-require("dotenv").config();
+import { connectToDb, closeDbConnection } from "./db.js";
 
-async function setupAccounts() {
-  const uri = process.env.MONGODB_URI;
-  const client = new MongoClient(uri);
+export default async function setupAccounts() {
   try {
-    await client.connect();
-    const db = client.db("bankDB");
+    const db = await connectToDb();
     const accounts = db.collection("accounts");
 
     // Clean the collection
@@ -40,12 +36,10 @@ async function setupAccounts() {
       },
     ]);
 
-    console.log(" Sample accounts setup completed.");
+    console.log("Sample accounts setup completed.");
   } catch (err) {
-    console.error("Error setting up accounts:", err);
+    console.error("❌ Error setting up accounts:", err);
   } finally {
-    await client.close();
+    await closeDbConnection();
   }
 }
-
-module.exports = setupAccounts;
